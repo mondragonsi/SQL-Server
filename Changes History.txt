@@ -1,0 +1,15 @@
+01/March/2018 = Initial codification and setup
+
+29/Aug/2018 - Logs Drive were changed from F: to L. It was changed in the script .txt parms
+
+29/Aug/2018 - Add instruction to edit Drive letter to mount the ISO. It can be for example F or G. Change it in the script .ps1 file
+
+13/Dec/2018 - Changed Drive letters.
+C:\ Windows OS
+D:\ Databases, data, tempDBs
+E:\ SQl Server Engine, Local BKP
+L:\ SQL Log
+
+Y as temp folder for .config file and .iso
+
+Using only a letter to change Directory
