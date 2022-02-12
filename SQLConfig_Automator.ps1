@@ -1,4 +1,26 @@
-﻿Y:
+$Global:NextDriveLetter = $null
+
+function Get-NextDriverLetter 
+{
+
+
+$DriveList = Get-PSDrive -PSProvider filesystem | foreach({($_.Root).Replace(":\","")})
+$AllDrives = [char[]]([int][char]'E'..[int][char]'Z')
+$NextDriveLetter = ($AllDrives | Where-Object { $DriveList -notcontains $_ } | Select-Object -First 1) + ":"
+
+cls
+
+Write-Host 'Next Drive letter is: ' $NextDriveLetter
+$Global:NextDriveLetter = $NextDriveLetter
+
+
+}
+
+
+function InstallSQLServerInstance
+{
+
+Y:
 
 #Initialize Variables
 $VALUE_OPTION='[OPTIONS]'
@@ -40,7 +62,7 @@ $OPTION_X86='X86'
 $VALUE_X86='"False"'
 
 $OPTION_INSTANCENAME='INSTANCENAME'
-$VALUE_INSTANCENAME='"ALM"'
+$VALUE_INSTANCENAME='"IT01SDA"'
 
 $OPTION_INSTALLSHAREDDIR='INSTALLSHAREDDIR'
 $VALUE_INSTALLSHAREDDIR='"D:\Program Files\Microsoft SQL Server"'
@@ -49,7 +71,7 @@ $OPTION_INSTALLSHAREDWOWDIR='INSTALLSHAREDWOWDIR'
 $VALUE_INSTALLSHAREDWOWDIR='"D:\Program Files (x86)\Microsoft SQL Server"'
 
 $OPTION_INSTANCEID='INSTANCEID'
-$VALUE_INSTANCEID='"ALM"'
+$VALUE_INSTANCEID='"IT01SDA"'
 
 $OPTION_SQLTELSVCACCT=';SQLTELSVCACCT'
 $VALUE_SQLTELSVCACCT='"NT Service\SQLTELEMETRY$MSSQLSERVER"'
@@ -97,7 +119,7 @@ $OPTION_SQLSVCINSTANTFILEINIT='SQLSVCINSTANTFILEINIT'
 $VALUE_SQLSVCINSTANTFILEINIT='"True"'
 
 $OPTION_SQLSYSADMINACCOUNTS='SQLSYSADMINACCOUNTS'
-$VALUE_SQLSYSADMINACCOUNTS='"DOMAIN\Group_SQLDBA_Admin" "DOMAIN\Group_SQLSYS_Admin"'
+$VALUE_SQLSYSADMINACCOUNTS='"SAPCORP\GU_DelegationGroup_SQLDBA_Admin" "SAPCORP\GU_DelegationGroup_SQLSYS_Admin"'
 
 $OPTION_SECURITYMODE='SECURITYMODE'
 $VALUE_SECURITYMODE='"SQL"'
@@ -121,19 +143,19 @@ $OPTION_INSTALLSQLDATADIR='INSTALLSQLDATADIR'
 $VALUE_INSTALLSQLDATADIR='"E:\MSSQL"'
 
 $OPTION_SQLBACKUPDIR='SQLBACKUPDIR'
-$VALUE_SQLBACKUPDIR='"E:\MSSQL-ALM\Backup"'
+$VALUE_SQLBACKUPDIR='"E:\MSSQL\Backup"'
 
 $OPTION_SQLUSERDBDIR='SQLUSERDBDIR'
-$VALUE_SQLUSERDBDIR='"E:\MSSQL-ALM\Data"'
+$VALUE_SQLUSERDBDIR='"E:\MSSQL\Data"'
 
 $OPTION_SQLUSERDBLOGDIR='SQLUSERDBLOGDIR'
-$VALUE_SQLUSERDBLOGDIR='"F:\MSSQL-ALM\Log"'
+$VALUE_SQLUSERDBLOGDIR='"F:\MSSQL\Log"'
 
 $OPTION_SQLTEMPDBDIR='SQLTEMPDBDIR'
-$VALUE_SQLTEMPDBDIR='"E:\MSSQL-ALM\Temp\Data"'
+$VALUE_SQLTEMPDBDIR='"T:\MSSQL\TempDB_Data"'
 
 $OPTION_SQLTEMPDBLOGDIR='SQLTEMPDBLOGDIR'
-$VALUE_SQLTEMPDBLOGDIR='"F:\MSSQL-ALM\Temp\Log"'
+$VALUE_SQLTEMPDBLOGDIR='"U:\MSSQL\TempDB_Log"'
 
 $OPTION_ADDCURRENTUSERASSQLADMIN='ADDCURRENTUSERASSQLADMIN'
 $VALUE_ADDCURRENTUSERASSQLADMIN='"False"'
@@ -276,7 +298,7 @@ $CMD_NPENABLED >> $PATH_TO_WRITE
 $CMD_BROWSERSVCSTARTUPTYPE >> $PATH_TO_WRITE
 $CMD_FTSVCACCOUNT >> $PATH_TO_WRITE
 
-$EXEC_SETUP_CMD_FINAL = "$($EXEC_SETUP_CMD_READ)$('/ConfigurationFile')=$('"')$($NAME_FILE_CONFIG)$('"')$(' /Q')"
+$EXEC_SETUP_CMD_FINAL = "$($EXEC_SETUP_CMD_READ)$('/ConfigurationFile')=$('"')$($NAME_FILE_CONFIG)$('"')$(' /QS')"
 
 Write-Host 'Read the following Parms from .txt'
 Write-Host 'Domain\adm account:'$ARRAY_PARMS[0]
@@ -288,13 +310,50 @@ Write-Host 'Setup Command read:'$ARRAY_PARMS[5]$('"')
 Write-Host 'Final Command'$EXEC_SETUP_CMD_FINAL
 
 
+
+$Global:NAME_FILE_ISO = $NAME_FILE_ISO
+
+
 Mount-DiskImage -ImagePath $NAME_FILE_ISO
 
-G:
+
+Write-Host 'Mounting on' $Global:NextDriveLetter
+
+Invoke-Expression $Global:NextDriveLetter
 DIR
 
-#Write-Host 'iso file path: '$NAME_FILE_ISO
-#Write-Host 'Ready to install using Command: ' $EXEC_SETUP_CMD_FINAL 
+Write-Host 'iso file path: '$NAME_FILE_ISO
+Write-Host 'Ready to install using Command: ' $EXEC_SETUP_CMD_FINAL 
 
 Invoke-Expression $EXEC_SETUP_CMD_FINAL
 
+}
+
+function DismountSqlIso{
+
+
+#Dismount-DiskImage -ImagePath Y:\SW_DVD9_SQL_Svr_Enterprise_Edtn_2017_64Bit_English_MLF_X21-56962.ISO
+
+
+Dismount-DiskImage -ImagePath $Global:NAME_FILE_ISO
+
+}
+
+
+
+cls
+
+Get-NextDriverLetter
+InstallSQLServerInstance
+  
+$DismountResp = Read-Host "Would you like to Dismount? (y) or (n) " +  $Global:NAME_FILE_ISO
+
+
+if ($DismountResp -eq 'y' ) 
+{
+    Write-Host "Dismounting " + $Global:NAME_FILE_ISO
+    DismountSqlIso
+}
+else {
+    Write-Host ("CD-ROM kept mounted! Bye")
+}
