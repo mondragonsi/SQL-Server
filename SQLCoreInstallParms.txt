@@ -1,9 +1,9 @@
-"DOMAIN\svc_SQLDBS06Q"
-"DOMAIN\svc_SQLDBS06Q"
+"SAPCORP\svc_engine"
+"SAPCORP\svc_agent"
 "4"
-Y:\en_sql_server_2016__x64_dvd_02466613.iso
-Y:\SQLDBS06Q-ALM-Config.ini
-.\Setup.exe /SQLSVCPASSWORD='sdjkshiks3k' /AGTSVCPASSWORD='kdlfjhkkldsf' /SAPWD='lkashdjkashd' 
+Y:\SW_DVD9_SQL_Svr_Enterprise_Edtn_2017_64Bit_English.ISO
+Y:\SQLDBS01-Config.ini
+.\Setup.exe /SQLSVCPASSWORD='xxx' /AGTSVCPASSWORD='xxx' /SAPWD='xxx' 
 
 -----INSTRUCTIONS TO FILL THE ABOVE PARAMETERS------
 1 - DOMAIN + ADM ACCOUNT
