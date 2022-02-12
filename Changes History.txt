@@ -13,3 +13,17 @@ L:\ SQL Log
 Y as temp folder for .config file and .iso
 
 Using only a letter to change Directory
+
+30-Jul-2019
+
+C:\ Windows OS
+D: Apps&Data
+E:\ Databases, data, 
+F:\ SQl Server Logs
+T: TempDB data
+U: TempDB Log
+V: Audit&History
+
+Unmount after script completes
+
+Dismount-DiskImage -ImagePath "Y:\en_sql_server_2016_standard_with_service_pack_1_x64_dvd_9540929.iso"
